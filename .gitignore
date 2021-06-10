@@ -1,129 +1,70 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
+import cv2 
 
-# C extensions
-*.so
+from matplotlib import pyplot as plt 
 
-# Distribution / packaging
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-pip-wheel-metadata/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
+  
+# Opening image 
 
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
+img = cv2.imread("image.jpg") 
 
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
+  
+# OpenCV opens images as BRG  
+# but we want it as RGB We'll  
+# also need a grayscale version 
 
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.nox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.py,cover
-.hypothesis/
-.pytest_cache/
+img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
 
-# Translations
-*.mo
-*.pot
+img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) 
 
-# Django stuff:
-*.log
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
+  
 
-# Flask stuff:
-instance/
-.webassets-cache
+  
+# Use minSize because for not  
+# bothering with extra-small  
+# dots that would look like STOP signs 
 
-# Scrapy stuff:
-.scrapy
+stop_data = cv2.CascadeClassifier('stop_data.xml') 
 
-# Sphinx documentation
-docs/_build/
+  
 
-# PyBuilder
-target/
+found = stop_data.detectMultiScale(img_gray,  
 
-# Jupyter Notebook
-.ipynb_checkpoints
+                                   minSize =(20, 20)) 
 
-# IPython
-profile_default/
-ipython_config.py
+  
+# Don't do anything if there's  
+# no sign 
 
-# pyenv
-.python-version
+amount_found = len(found) 
 
-# pipenv
-#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
-#   However, in case of collaboration, if having platform-specific dependencies or dependencies
-#   having no cross-platform support, pipenv may install dependencies that don't work, or not
-#   install all needed dependencies.
-#Pipfile.lock
+  
 
-# PEP 582; used by e.g. github.com/David-OConnor/pyflow
-__pypackages__/
+if amount_found != 0: 
 
-# Celery stuff
-celerybeat-schedule
-celerybeat.pid
+      
 
-# SageMath parsed files
-*.sage.py
+    # There may be more than one 
 
-# Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
+    # sign in the image 
 
-# Spyder project settings
-.spyderproject
-.spyproject
+    for (x, y, width, height) in found: 
 
-# Rope project settings
-.ropeproject
+          
 
-# mkdocs documentation
-/site
+        # We draw a green rectangle around 
 
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
+        # every recognized sign 
 
-# Pyre type checker
-.pyre/
+        cv2.rectangle(img_rgb, (x, y),  
+
+                      (x + height, y + width),  
+
+                      (0, 255, 0), 5) 
+
+          
+# Creates the environment of  
+# the picture and shows it 
+
+plt.subplot(1, 1, 1) 
+plt.imshow(img_rgb) 
+plt.show() 
